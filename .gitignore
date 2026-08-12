@@ -1,0 +1,25 @@
+# 极签 Build
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+.DS_Store
+server/jisign-server
+*.env
+server/.env
+.env
+server/certs/
+*.ipa
+
+# 二进制文件
+jisign-server-linux
+jisign-server-linux.new
+jisign-server-new
+server/jisign-server.exe
+server/jisign-server-linux
+server/jisign-server-linux.new
+
+# 临时文件
+*.tmp
+*.bak
+install-git.ps1

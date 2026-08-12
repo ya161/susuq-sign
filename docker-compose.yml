@@ -1,0 +1,54 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+    container_name: jisign-server
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server/certs:/app/certs:ro
+      - ./website:/app/website:ro
+      - /opt/jisign/ipa:/opt/jisign/ipa
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: jisign-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: jisign
+      POSTGRES_USER: jisign
+      POSTGRES_PASSWORD: 970302yY@
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+      - ./server/migrations/003_pending_devices.sql:/docker-entrypoint-initdb.d/003_pending_devices.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jisign"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: jisign-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:
