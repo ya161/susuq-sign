@@ -1,6 +1,6 @@
- name: Build IPA
+name: Build IPA
 
-  on:
+  "on":
     workflow_dispatch:
 
   jobs:
