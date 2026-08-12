@@ -1,11 +1,12 @@
-name: Build Unsigned IPA
+ name: Build Unsigned IPA
 
-  on:
+  'on':
     workflow_dispatch:
     push:
-      branches: [main]
+      branches:
+        - main
       paths:
-        - 'ios/**'
+        - ios/**
 
   jobs:
     build:
