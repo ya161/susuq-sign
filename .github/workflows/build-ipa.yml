@@ -27,7 +27,6 @@ jobs:
           xcodebuild -project JiSign.xcodeproj \
             -scheme JiSign \
             -configuration Release \
-            -destination 'generic/platform=iOS' \
             -derivedDataPath build \
             -sdk iphoneos \
             SUPPORTED_PLATFORMS=iphoneos \
