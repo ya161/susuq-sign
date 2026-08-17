@@ -142,6 +142,7 @@ class IPASigner {
         let ret = zsign(
             appDir.path,
             options.p12Path.path,
+            options.p12Path.path,
             options.mobileprovisionPath.path,
             options.p12Password,
             options.newBundleID ?? "",
@@ -236,7 +237,7 @@ class IPASigner {
 
             // zsign 签名
             let ret = zsign(
-                cloneAppDir.path, p12Path.path,
+                cloneAppDir.path, p12Path.path, p12Path.path,
                 mobileprovisionPath.path, p12Password,
                 clone.bundleID, clone.appName
             )

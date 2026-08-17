@@ -798,7 +798,7 @@ struct ImportCertView: View {
                 isPresented: $showP12Picker,
                 allowedContentTypes: [.init(filenameExtension: "p12")!]
             ) { result in
-                if case .success(let urls) = result, let url = urls.first {
+                if case .success(let url) = result {
                     p12URL = url
                 }
             }
@@ -806,7 +806,7 @@ struct ImportCertView: View {
                 isPresented: $showMPPicker,
                 allowedContentTypes: [.init(filenameExtension: "mobileprovision")!]
             ) { result in
-                if case .success(let urls) = result, let url = urls.first {
+                if case .success(let url) = result {
                     mpURL = url
                 }
             }
