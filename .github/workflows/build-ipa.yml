@@ -14,11 +14,12 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Install iOS Platform
+      - name: Check iOS Platform
         run: |
-          xcodebuild -downloadPlatform iOS
-          xcodebuild -downloadPlatform iOS
-          xcodebuild -downloadPlatform iOS
+          echo "=== 已安装的SDK ==="
+          xcodebuild -showsdks 2>&1 | grep -i ios || true
+          echo "=== 已安装的运行时 ==="
+          xcrun simctl runtime list 2>&1 || true
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -30,14 +31,12 @@ jobs:
         run: |
           cd ios
           set -eo pipefail
+          # 使用 sdk 参数直接指定 iphoneos，不需要 iOS 平台
           xcodebuild -project JiSign.xcodeproj \
             -scheme JiSign \
             -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -derivedDataPath build \
             -sdk iphoneos \
-            SUPPORTED_PLATFORMS=iphoneos \
-            ENABLE_PREVIEWS=NO \
+            -derivedDataPath build \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
