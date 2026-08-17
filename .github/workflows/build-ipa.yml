@@ -56,25 +56,35 @@ jobs:
       - name: Create IPA
         run: |
           cd ios
-          APP_DIR="build/Build/Products/Release-iphoneos/JiSign.app"
-          echo "--- 构建输出目录 ---"
-          find "$APP_DIR" -type f | head -30
-          echo "--- 检查主程序 ---"
-          if [ ! -f "$APP_DIR/JiSign" ]; then
-            echo "❌ 主程序文件缺失！"
-            echo "--- build.log 最后50行 ---"
-            tail -50 build.log 2>/dev/null || true
-            echo "--- 完整构建目录 ---"
-            find build/ -maxdepth 5 -type f -name "JiSign*" 2>/dev/null
+          echo "=== 查找 JiSign.app ==="
+          APP_DIR=$(find build -name "JiSign.app" -type d | head -1)
+          if [ -z "$APP_DIR" ]; then
+            echo "❌ JiSign.app 未找到"
+            echo "--- 构建目录内容 ---"
+            find build -maxdepth 5 -type d 2>/dev/null | head -30
+            echo "--- build.log 最后80行 ---"
+            tail -80 build.log 2>/dev/null || true
             exit 1
           fi
-          echo "✅ 主程序文件存在，大小: $(du -h "$APP_DIR/JiSign" | cut -f1)"
-          mkdir -p ipa/Payload
-          cp -r "$APP_DIR" ipa/Payload/
-          cd ipa
-          zip -r ../JiSign-unsigned.ipa Payload/
-          echo "--- IPA 内容 ---"
-          unzip -l ../JiSign-unsigned.ipa
+          echo "✅ 找到: $APP_DIR"
+          # 检查主程序文件
+          if [ ! -f "$APP_DIR/JiSign" ]; then
+            echo "❌ 主程序文件缺失！内容:"
+            ls -la "$APP_DIR/" | head -20
+            exit 1
+          fi
+          echo "✅ 主程序: $(du -h "$APP_DIR/JiSign" | cut -f1)"
+          # 创建 IPA
+          mkdir -p Payload
+          cp -r "$APP_DIR" Payload/
+          zip -r JiSign-unsigned.ipa Payload/
+          rm -rf Payload
+          echo "=== IPA 信息 ==="
+          ls -lh JiSign-unsigned.ipa
+          unzip -l JiSign-unsigned.ipa | head -20
+          # 移动到工作区根目录
+          cp JiSign-unsigned.ipa ../
+          echo "✅ IPA 已复制到: $(pwd)/../JiSign-unsigned.ipa"
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
