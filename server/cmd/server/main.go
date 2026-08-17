@@ -18,6 +18,7 @@ import (
 	"github.com/haifeng/jisign-server/internal/service"
 	"github.com/haifeng/jisign-server/internal/payment"
 	"github.com/haifeng/jisign-server/internal/sms"
+	"github.com/haifeng/jisign-server/internal/yiqian"
 	"github.com/haifeng/jisign-server/pkg/middleware"
 )
 
@@ -198,6 +199,17 @@ func main() {
 	}
 	certHandler := &handler.CertHandler{CertService: certSvc, CertRepo: certRepo, Neicexia: nxClient, InstallHandler: installHandler}
 
+	// 易签客户端（用于证书下载）
+	yiqianToken := getEnv("YIQIAN_TOKEN", "")
+	var certDownloadHandler *handler.CertDownloadHandler
+	if yiqianToken != "" {
+		yiqianClient := yiqian.NewClient(yiqianToken)
+		certDownloadHandler = &handler.CertDownloadHandler{YiqianClient: yiqianClient}
+		log.Println("易签API已启用")
+	} else {
+		log.Println("警告: YIQIAN_TOKEN 未设置，证书下载功能不可用")
+	}
+
 	// 路由
 	r := gin.Default()
 
@@ -254,6 +266,10 @@ func main() {
 		// 用户证书签名（公开接口，Web 前端调用）
 		api.POST("/install/sign-with-cert", installHandler.SignWithCert)
 
+		// 易签证书下载（公开接口，Web 前端调用）
+		if certDownloadHandler != nil {
+			api.POST("/cert/download-yiqian", certDownloadHandler.DownloadCert)
+		}
 
 		// ========== 需认证路由 ==========
 		auth := api.Group("")

@@ -47,7 +47,7 @@ export default function CertDownloadPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/cert/download-yiqian", {
+      const response = await fetch("https://api.susuq.top/api/cert/download-yiqian", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ udid, cert_type: certType }),

@@ -69,9 +69,11 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>39.96.76.211</key>
+			<key>upload.susuq.top</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 		</dict>

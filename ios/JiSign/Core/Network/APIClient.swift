@@ -10,8 +10,8 @@ class APIClient {
     static let shared = APIClient()
 
     private let baseURL: String
-    /// 直连服务器 URL（绕过 Cloudflare 的 100MB 上传限制）
-    private let directURL = "http://39.96.76.211"
+    /// 直连服务器 URL（HTTPS上传，绕过 Cloudflare 的 100MB 上传限制）
+    private let directURL = "https://upload.susuq.top"
     private let session: URLSession
     private var authToken: String?
     private var udidSig: String?  // UDID 签名令牌，登录后从 /api/udid/sign 获取
