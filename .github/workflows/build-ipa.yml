@@ -34,7 +34,8 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            ENABLE_BITCODE=NO
+            ENABLE_BITCODE=NO \
+            2>&1 | tail -50
 
       - name: Create IPA
         run: |
