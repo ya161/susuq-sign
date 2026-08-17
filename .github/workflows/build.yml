@@ -1,12 +1,10 @@
 name: Test
 
 "on":
-workfiow_dispatch:
+  workflow_dispatch:
 
 jobs:
   job1:
-  runs-on:
-  ubuntu-latest
-  steps:
-  -run:
-  echo hi
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hi
