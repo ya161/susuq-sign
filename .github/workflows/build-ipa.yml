@@ -23,6 +23,7 @@ jobs:
       - name: Build IPA
         run: |
           cd ios
+          set -o pipefail
           xcodebuild -project JiSign.xcodeproj \
             -scheme JiSign \
             -configuration Release \
@@ -34,15 +35,28 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            ENABLE_BITCODE=NO \
-            2>&1 | tail -50
+            ENABLE_BITCODE=NO | cat
+          echo "--- Build output directory ---"
+          ls -la build/Build/Products/Release-iphoneos/JiSign.app/ 2>/dev/null || echo "❌ Build output not found!"
 
       - name: Create IPA
         run: |
+          APP_DIR="ios/build/Build/Products/Release-iphoneos/JiSign.app"
+          if [ ! -f "$APP_DIR/JiSign" ]; then
+            echo "❌ 主程序文件缺失！"
+            echo "--- 目录内容 ---"
+            find "$APP_DIR" -type f | head -30
+            echo "--- 完整构建目录 ---"
+            find ios/build/Build/Products/Release-iphoneos/ -maxdepth 2 -type f | head -30
+            exit 1
+          fi
+          echo "✅ 主程序文件存在，大小: $(du -h "$APP_DIR/JiSign" | cut -f1)"
           mkdir -p ipa/Payload
-          cp -r ios/build/Build/Products/Release-iphoneos/JiSign.app ipa/Payload/
+          cp -r "$APP_DIR" ipa/Payload/
           cd ipa
           zip -r ../JiSign-unsigned.ipa Payload/
+          echo "--- IPA 内容 ---"
+          unzip -l ../JiSign-unsigned.ipa | tail -5
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
