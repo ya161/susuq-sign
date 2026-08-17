@@ -18,6 +18,11 @@ jobs:
         run: |
           echo "=== 已安装的SDK ==="
           xcodebuild -showsdks 2>&1 | grep -i ios || true
+          echo "=== Xcode 路径 ==="
+          xcode-select -p
+          echo "=== 已安装的平台 ==="
+          ls /Applications/Xcode*.app/Contents/Developer/Platforms/ 2>/dev/null || true
+          ls /Library/Developer/CommandLineTools/Platforms/ 2>/dev/null || true
           echo "=== 已安装的运行时 ==="
           xcrun simctl runtime list 2>&1 || true
 
@@ -31,11 +36,14 @@ jobs:
         run: |
           cd ios
           set -eo pipefail
-          # 使用 sdk 参数直接指定 iphoneos，不需要 iOS 平台
+          # 查看可用的 scheme 和目标
+          xcodebuild -project JiSign.xcodeproj -list 2>&1
+          echo "---"
+          # 使用 iOS Device 通用目标
           xcodebuild -project JiSign.xcodeproj \
             -scheme JiSign \
             -configuration Release \
-            -sdk iphoneos \
+            -destination 'generic/platform=iOS Device' \
             -derivedDataPath build \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
