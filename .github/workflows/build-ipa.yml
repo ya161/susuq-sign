@@ -17,6 +17,9 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Install iOS Platform
+        run: xcodebuild -downloadPlatform iOS
+
       - name: Generate Xcode project
         run: cd ios && xcodegen generate
 
@@ -27,6 +30,7 @@ jobs:
           xcodebuild -project JiSign.xcodeproj \
             -scheme JiSign \
             -configuration Release \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath build \
             -sdk iphoneos \
             SUPPORTED_PLATFORMS=iphoneos \
